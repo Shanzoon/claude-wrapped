@@ -92,6 +92,7 @@ export interface WrappedData {
 
   // 第一次
   firstPrompt: { text: string; date: string; project: string }
+  firstTask: { text: string; date: string; project: string }
   firstProject: string
 
   // 连续活跃天数
@@ -112,4 +113,120 @@ export interface WrappedData {
 
   // 挫折时刻
   frustrationMoments: { date: string; text: string }[]
+}
+
+// ── Claude 结构化输出 ──
+
+// Call A: 分析型（成长轨迹、性格画像、项目叙事）
+export interface CallAOutput {
+  growth: {
+    month: string
+    summary: string   // 可分享：不含项目名和原文
+    detail: string    // 私密：含原文引用和项目细节
+    keyQuotes: string[]
+  }[]
+  personality: {
+    label: string     // 可分享：性格标签
+    evidence: string  // 私密：含原文引用
+  }[]
+  projects: {
+    summary: string   // 可分享：项目方向概括
+    detail: string    // 私密：含项目名和细节
+  }
+}
+
+// Call B: 叙事型（开场、初见、节奏、细节、结尾）
+export interface CallBOutput {
+  headline: string    // 可分享：一句冲击力的话，不含项目名
+  opener: string      // 可分享：开场白正文
+  firstMeeting: {
+    summary: string   // 可分享：概括性描述
+    detail: string    // 私密：含原文引用
+  }
+  rhythm: {
+    summary: string   // 可分享：作息概括
+    detail: string    // 私密：具体时段描述
+  }
+  secrets: {
+    title: string     // 可分享：有戳点但不暴露细节
+    body: string      // 私密：含项目名和原文
+  }[]
+  closing: string     // 可分享：不含项目名
+}
+
+// ── 结构化数据表格 ──
+
+export interface OverviewStats {
+  totalDays: number
+  dateRange: string           // "2026-01-04 ~ 2026-04-21"
+  activeDays: number
+  attendanceRate: number      // 0-1
+  totalPrompts: number
+  totalConversations: number
+  totalTokens: number
+  totalApiCalls: number
+  longestStreak: { days: number; range: string }
+  longestConversation: { rounds: number; project: string }
+  lateNight: { days: number; count: number }
+  chineseRatio: number
+}
+
+export interface HourSlot {
+  label: string
+  hours: number[]
+  total: number
+  peakHour: number
+}
+
+export interface WeekdayStat {
+  day: string
+  count: number
+}
+
+// ── 按展示目标分层的总报告 JSON ──
+
+export interface ReportJSON {
+  /** 可公开分享的内容：适合截图、社交卡片 */
+  share: {
+    headline: string            // 一句冲击力开场
+    opener: string              // 开场白正文
+    growthSummaries: string[]   // 每月一句概括（无项目名）
+    personalityTags: string[]   // 性格标签（无项目名）
+    projectSummary: string      // 项目方向概括（无项目名）
+    rhythmSummary: string       // 作息概括
+    firstMeetingSummary: string // 初见概括
+    secretTitles: string[]      // 细节标题（有戳点但不暴露）
+    closing: string             // 结尾
+  }
+
+  /** 完整叙事：含项目名、原文引用，私密阅读用 */
+  story: {
+    firstMeeting: { summary: string; detail: string }
+    growth: {
+      month: string
+      summary: string
+      detail: string
+      keyQuotes: string[]
+    }[]
+    personality: { label: string; evidence: string }[]
+    rhythm: { summary: string; detail: string }
+    projects: { summary: string; detail: string }
+    secrets: { title: string; body: string }[]
+    closing: string
+  }
+
+  /** 结构化数据表格 */
+  data: {
+    overview: OverviewStats
+    monthly: MonthlyStats[]
+    hourSlots: HourSlot[]
+    weekdays: WeekdayStat[]
+    raw: WrappedData
+  }
+
+  /** 隐私元数据 */
+  privacy: {
+    containsProjectNames: boolean
+    sensitiveFields: string[]
+  }
 }

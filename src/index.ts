@@ -37,14 +37,15 @@ async function main() {
   console.log('🔍 正在分析...')
   const analysis = analyze(rawData)
 
-  console.log('✍️  正在生成报告（调用 Claude）...')
-  const report = await generateReport(analysis, model)
+  console.log('✍️  正在生成报告（并行调用 Claude）...')
+  const { reportPath } = await generateReport(analysis, model)
 
   console.log('🖼️  正在生成一图流...')
   await generateCard(analysis)
 
   console.log('\n✅ 完成！')
-  console.log(`   报告: ${report}`)
+  console.log(`   报告: ${reportPath}`)
+  console.log(`   数据: ./claude-wrapped-report.json`)
   console.log(`   一图流: ./claude-wrapped-card.png`)
 }
 

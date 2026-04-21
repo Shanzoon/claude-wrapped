@@ -287,7 +287,20 @@ function computeExtremes(raw: RawData) {
 
   const firstProject = first ? shortProjectName(first.project) : ''
 
-  return { busiestDay, latestNight, longestPrompt, firstPrompt, firstProject }
+  // 第一条真正的任务（跳过问候和测试消息）
+  const GREETINGS = ['你好', '你好呀', '嗨', '在吗', 'hello', 'hi', 'hey', 'test', '测试']
+  const firstReal = sorted.find(p => {
+    if (p.display.trim().length < 10) return false
+    const lower = p.display.trim().toLowerCase()
+    if (GREETINGS.some(g => lower === g)) return false
+    if (shortProjectName(p.project) === raw.username) return false
+    return true
+  })
+  const firstTask = firstReal
+    ? { text: firstReal.display.slice(0, 100), date: toDateStr(firstReal.timestamp), project: shortProjectName(firstReal.project) }
+    : firstPrompt // 兜底：如果全是问候，就用 firstPrompt
+
+  return { busiestDay, latestNight, longestPrompt, firstPrompt, firstTask, firstProject }
 }
 
 // ── 深夜统计 ──
