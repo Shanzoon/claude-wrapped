@@ -52,6 +52,26 @@ function buildWaitingMessages(data: WrappedData): string[] {
     msgs.push(`你有 ${data.lateNightDays} 个通宵夜晚，正在寻找规律...`)
   }
 
+  // 基于连续活跃
+  if (data.longestStreak.days > 1) {
+    msgs.push(`你曾连续 ${data.longestStreak.days} 天和 Claude 对话，那是 ${data.longestStreak.startDate} 到 ${data.longestStreak.endDate}...`)
+  }
+
+  // 基于最长对话
+  if (data.longestConversation.rounds > 10) {
+    msgs.push(`正在回顾你在 ${data.longestConversation.project} 里那场 ${data.longestConversation.rounds} 轮的马拉松对话...`)
+  }
+
+  // 基于 tokens/prompt 增长
+  const monthlyArr = data.monthly
+  if (monthlyArr.length >= 2) {
+    const firstTpp = monthlyArr[0].tokensPerPrompt
+    const lastTpp = monthlyArr[monthlyArr.length - 1].tokensPerPrompt
+    if (lastTpp > firstTpp * 3) {
+      msgs.push(`你的单次对话复杂度翻了 ${Math.round(lastTpp / firstTpp)} 倍，正在分析为什么...`)
+    }
+  }
+
   // 基于性格相关
   msgs.push('正在推断你的性格画像...')
   msgs.push('正在撰写成长轨迹...')

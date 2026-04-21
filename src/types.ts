@@ -31,6 +31,7 @@ export interface MonthlyStats {
   month: string // YYYY-MM
   prompts: number
   tokens: number
+  tokensPerPrompt: number
   apiCalls: number
   activeDays: number
 }
@@ -92,6 +93,12 @@ export interface WrappedData {
   // 第一次
   firstPrompt: { text: string; date: string; project: string }
   firstProject: string
+
+  // 连续活跃天数
+  longestStreak: { days: number; startDate: string; endDate: string }
+
+  // 最长单次对话
+  longestConversation: { rounds: number; project: string; startHour: number; endHour: number; startDate: string; endDate: string }
 
   // 深夜统计
   lateNightCount: number
