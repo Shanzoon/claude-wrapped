@@ -13,7 +13,7 @@ export async function generateReport(data: WrappedData): Promise<string> {
   console.log('  （这可能需要 30-60 秒，请耐心等待...）')
 
   const output = execSync(
-    `cat "${tmpFile}" | claude -p --max-turns 1`,
+    `cat "${tmpFile}" | claude -p --max-turns 3`,
     {
       maxBuffer: 10 * 1024 * 1024,
       timeout: 300_000,
