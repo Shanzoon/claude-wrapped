@@ -79,7 +79,7 @@ function buildWaitingMessages(data: WrappedData): string[] {
   return msgs
 }
 
-export async function generateReport(data: WrappedData): Promise<string> {
+export async function generateReport(data: WrappedData, model: string = 'sonnet'): Promise<string> {
   const prompt = buildPrompt(data)
   const tmpFile = '/tmp/claude-wrapped-prompt.txt'
   writeFileSync(tmpFile, prompt, 'utf-8')
@@ -99,7 +99,7 @@ export async function generateReport(data: WrappedData): Promise<string> {
 
   try {
     const output = await new Promise<string>((resolve, reject) => {
-      const child = spawn('sh', ['-c', `cat "${tmpFile}" | claude -p --max-turns 3`], {
+      const child = spawn('sh', ['-c', `cat "${tmpFile}" | claude -p --model ${model} --max-turns 3`], {
         stdio: ['inherit', 'pipe', 'pipe'],
       })
 
