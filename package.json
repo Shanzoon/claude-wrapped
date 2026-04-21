@@ -1,6 +1,6 @@
 {
   "name": "@shanzoon/claude-wrapped",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "One command to generate your personalized Claude Code usage report and shareable card",
   "type": "module",
   "bin": {
