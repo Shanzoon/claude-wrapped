@@ -1,47 +1,35 @@
 #!/usr/bin/env node
+import { createInterface } from 'node:readline'
 import { collect } from './collector.js'
 import { analyze } from './analyzer.js'
 import { generateReport } from './reporter.js'
 import { generateCard } from './card.js'
 
-function parseArgs(): { model: string } {
-  const args = process.argv.slice(2)
-  let model = 'sonnet' // 默认 sonnet，省钱
+async function chooseModel(): Promise<string> {
+  console.log('🎬 Claude Wrapped\n')
+  console.log('选择生成报告的模型:\n')
+  console.log('  1) sonnet — 速度快，性价比高（推荐）')
+  console.log('  2) opus   — 分析更深度，费用较高\n')
 
-  for (let i = 0; i < args.length; i++) {
-    if (args[i] === '--model' && args[i + 1]) {
-      const val = args[i + 1].toLowerCase()
-      if (val === 'opus' || val === 'sonnet') {
-        model = val
+  const rl = createInterface({ input: process.stdin, output: process.stdout })
+
+  return new Promise((resolve) => {
+    rl.question('请输入 1 或 2（默认 1）: ', (answer) => {
+      rl.close()
+      const choice = answer.trim()
+      if (choice === '2' || choice.toLowerCase() === 'opus') {
+        resolve('opus')
       } else {
-        console.error(`❌ 不支持的模型: ${args[i + 1]}，可选: opus, sonnet`)
-        process.exit(1)
+        resolve('sonnet')
       }
-      i++
-    } else if (args[i] === '--help' || args[i] === '-h') {
-      console.log(`
-Claude Wrapped — 生成你的 Claude Code 个人使用报告
-
-用法:
-  npx @shanzoon/claude-wrapped [选项]
-
-选项:
-  --model <opus|sonnet>  选择生成报告的模型（默认: sonnet）
-                         opus  - 更深度的分析，费用较高
-                         sonnet - 性价比之选，推荐大多数用户
-  -h, --help             显示帮助信息
-`)
-      process.exit(0)
-    }
-  }
-
-  return { model }
+    })
+  })
 }
 
 async function main() {
-  const { model } = parseArgs()
+  const model = await chooseModel()
 
-  console.log(`🎬 Claude Wrapped — 生成中...（模型: ${model}）\n`)
+  console.log(`\n— 使用模型: ${model} —\n`)
 
   console.log('📊 正在扫描数据...')
   const rawData = await collect()
