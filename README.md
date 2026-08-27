@@ -3,7 +3,7 @@
 一行命令，生成你的 Claude Code 个人使用报告 + 可分享的一图流。
 
 ```bash
-npx claude-wrapped
+npx @shanzoon/claude-wrapped
 ```
 
 ## 输出
